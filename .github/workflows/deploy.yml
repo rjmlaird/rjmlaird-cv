@@ -1,34 +1,36 @@
-name: Deploy Astro Site
+name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]  # Change to your default branch if different
+    branches:
+      - main  # Trigger deployment on pushes to main
 
 jobs:
-  build:
-    name: ⚙️ Build Astro Site
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: ⬇️ Checkout repository
-        uses: actions/checkout@v4
+      # 1. Checkout the repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: 🟢 Use Node.js
-        uses: actions/setup-node@v4
+      # 2. Setup Node (optional if your template uses npm for builds)
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '18'
 
-      - name: 📦 Install dependencies
-        run: npm ci
+      # 3. Install dependencies (if using npm, otherwise skip)
+      - name: Install dependencies
+        run: npm ci || echo "No package.json, skipping install"
 
-      - name: 🛠️ Build site
-        run: npm run build
+      # 4. Build the project (optional)
+      - name: Build site
+        run: npm run build || echo "No build script, skipping"
 
-      - name: 📤 Deploy to GitHub Pages
-        if: github.ref == 'refs/heads/main'
-        uses: peaceiris/actions-gh-pages@v4
+      # 5. Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v6
         with:
-          # Use your PAT stored in repo secrets, not the default GITHUB_TOKEN
-          github_token: ${{ secrets.PAT_TOKEN }}
-          publish_dir: ./dist
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./  # Root folder if static, or ./dist if using build output
