@@ -3,34 +3,31 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # Trigger deployment on pushes to main
+      - main  # Deploy on pushes to main branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout the repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Setup Node (optional if your template uses npm for builds)
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      # 3. Install dependencies (if using npm, otherwise skip)
       - name: Install dependencies
         run: npm ci || echo "No package.json, skipping install"
 
-      # 4. Build the project (optional)
       - name: Build site
         run: npm run build || echo "No build script, skipping"
 
-      # 5. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v6
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./  # Root folder if static, or ./dist if using build output
+          publish_dir: ./docs   # <-- deploy only /docs folder
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
