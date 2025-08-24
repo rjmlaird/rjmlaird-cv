@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,9 +27,14 @@ jobs:
       - name: Build project
         run: npm run build
 
+      # Ensure CNAME is included for rjmlaird.cv
+      - name: Add CNAME file
+        run: echo "rjmlaird.cv" > ./dist/CNAME
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.PAT_TOKEN }}
           publish_dir: ./dist
           publish_branch: gh-pages
+          external_repository: rjmlaird/rjmlaird-cv
