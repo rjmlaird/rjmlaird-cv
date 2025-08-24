@@ -1,9 +1,9 @@
-name: Deploy Astro site to GitHub Pages
+name: Deploy Docsy site to GitHub Pages
 
 on:
   push:
     branches:
-      - main   # deploy on pushes to main
+      - main
 
 permissions:
   contents: read
@@ -19,28 +19,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      # Install Hugo
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v3
         with:
-          node-version: 20
-          cache: npm
+          hugo-version: "0.115.0" # adjust if needed
+          extended: true
 
-      - name: Install dependencies
-        run: npm ci
+      # Build the Hugo site
+      - name: Build site
+        run: hugo --minify --gc
 
-      - name: Build project
-        run: npm run build
+      # Add CNAME for custom domain
+      - name: Add CNAME
+        run: echo "rjmlaird.cv" > ./public/CNAME
 
-      - name: Add CNAME for custom domain
-        run: echo "rjmlaird.cv" > ./dist/CNAME
-
-      - name: Upload build output
+      # Upload Hugo public folder
+      - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist   # Astro build output folder
+          path: ./public
 
   deploy:
     needs: build
