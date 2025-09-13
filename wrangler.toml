@@ -1,5 +1,23 @@
+# Project name
 name = "rjmlaird-cv"
+
+# Wrangler runtime compatibility
 compatibility_date = "2025-09-13"
 
+# Optional: your Cloudflare account ID
+# account_id = "YOUR_ACCOUNT_ID"
+
+# Serve static site
 [site]
-bucket = "./dist"
+bucket = "./dist"       # Astro output
+entry-point = "."       # Pages ignores this, required for Wrangler
+
+# Optional environments
+[env.production]
+# override settings for production if needed
+
+[env.development]
+# override settings for dev if needed
+
+# Optional: Worker API integration
+# main = "workers/index.js"  # uncomment if you add Worker later
